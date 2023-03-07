@@ -37,4 +37,8 @@ class Market
     item_quantities = @vendors.map { |vendor| vendor.inventory[item] }
     item_quantities.sum
   end
+
+  def overstocked_items
+    all_items.select { |item| vendors_that_sell(item).count > 1 && total_quantity(item) > 50}
+  end
 end
