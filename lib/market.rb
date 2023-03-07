@@ -19,7 +19,22 @@ class Market
   end
 
   def sorted_item_list
-    all_items = @vendors.map { |vendor| vendor.inventory.keys.map(&:name) }
-    all_items.flatten.uniq.sort
+    all_items.map(&:name).sort
+  end
+
+  def all_items
+    @vendors.map { |vendor| vendor.inventory.keys }.flatten.uniq
+  end
+
+  def total_inventory
+    all_items.map do |item|
+      item_details = [['Quantity', total_quantity(item)], ['Vendors', vendors_that_sell(item)]].to_h
+      [item, item_details]
+    end.to_h
+  end
+
+  def total_quantity(item)
+    item_quantities = @vendors.map { |vendor| vendor.inventory[item] }
+    item_quantities.sum
   end
 end
