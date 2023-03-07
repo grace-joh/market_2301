@@ -25,6 +25,7 @@ RSpec.describe Vendor do
     it 'exists and has attributes' do
       expect(@market).to be_a Market
       expect(@market.name).to eq('South Pearl Street Farmers Market')
+      expect(@market.date).to eq(Date.today)
     end
   end
 
@@ -124,6 +125,28 @@ RSpec.describe Vendor do
       @vendor3.stock(@item3, 26)
 
       expect(@market.overstocked_items).to eq([@item1, @item3])
+    end
+  end
+
+  describe '#sell' do
+    it 'returns false if there is not enough of the item to sell' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
+      expect(@market.sell(@item1, 200)).to eq(false)
+      expect(@vendor1.check_stock(@item1)).to eq(35)
+      expect(@vendor3.check_stock(@item1)).to eq(65)
+    end
+
+    it 'returns true if there is enough of the item to sell and reduces amount by stock intake' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
+      expect(@market.sell(@item1, 40)).to eq(true)
+      expect(@vendor1.check_stock(@item1)).to eq(0)
+      expect(@vendor3.check_stock(@item1)).to eq(60)
     end
   end
 end
