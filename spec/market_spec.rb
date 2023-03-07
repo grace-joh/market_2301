@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Vendor do
-  before(:all) do
+  before(:each) do
     @item1 = Item.new({ name: 'Peach',
                         price: '$0.75' })
     @item2 = Item.new({ name: 'Tomato',
@@ -42,12 +42,20 @@ RSpec.describe Vendor do
 
   describe '#vendor_names' do
     it 'can list all vendors names' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
       expect(@market.vendor_names).to eq(['Rocky Mountain Fresh', 'Ba-Nom-a-Nom', 'Palisade Peach Shack'])
     end
   end
 
   describe '#vendors_that_sell' do
     it 'can list vendors that sell a specific item' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
       expect(@market.vendors_that_sell(@item1)).to eq([@vendor1, @vendor3])
       expect(@market.vendors_that_sell(@item4)).to eq([@vendor2])
     end
@@ -55,7 +63,53 @@ RSpec.describe Vendor do
 
   describe '#sorted_item_list' do
     it 'lists the names of all items the markets vendors have in stock alphabetically' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
       expect(@market.sorted_item_list).to eq(['Banana Nice Cream', 'Peach', 'Peach-Raspberry Nice Cream', 'Tomato'])
+    end
+  end
+
+  describe '#all_items' do
+    it 'lists all unique items sold at the market' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
+      expect(@market.all_items).to eq([@item1, @item2, @item3, @item4])
+    end
+  end
+
+  describe '#total_inventory' do
+    it 'reports the quantities of all items sold at the market' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
+      expected = { @item1 => { 'Quantity' => 100,
+                               'Vendors' => [@vendor1, @vendor3] },
+                   @item2 => { 'Quantity' => 7,
+                               'Vendors' => [@vendor1] },
+                   @item3 => { 'Quantity' => 25,
+                               'Vendors' => [@vendor2] },
+                   @item4 => { 'Quantity' => 50,
+                               'Vendors' => [@vendor2] } }
+
+      expect(@market.total_inventory).to eq(expected)
+    end
+  end
+
+  describe '#total_quantity' do
+    it 'lists the total quantity of an item sold by all vendors in the market' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor2)
+      @market.add_vendor(@vendor3)
+
+      expect(@market.total_quantity(@item1)).to eq(100)
+      expect(@market.total_quantity(@item2)).to eq(7)
+      expect(@market.total_quantity(@item3)).to eq(25)
+      expect(@market.total_quantity(@item4)).to eq(50)
     end
   end
 end
