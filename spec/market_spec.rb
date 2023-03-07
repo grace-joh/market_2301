@@ -147,6 +147,26 @@ RSpec.describe Vendor do
       expect(@market.sell(@item1, 40)).to eq(true)
       expect(@vendor1.check_stock(@item1)).to eq(0)
       expect(@vendor3.check_stock(@item1)).to eq(60)
+
+      @vendor2.stock(@item1, 10)
+
+      expect(@market.sell(@item1, 65)).to eq(true)
+      expect(@vendor1.check_stock(@item1)).to eq(0)
+      expect(@vendor2.check_stock(@item1)).to eq(0)
+      expect(@vendor3.check_stock(@item1)).to eq(5)
+    end
+
+    it 'sells items in the order vendors were added' do
+      @market.add_vendor(@vendor1)
+      @market.add_vendor(@vendor3)
+      @market.add_vendor(@vendor2)
+      @vendor2.stock(@item1, 10)
+
+      expect(@market.sell(@item1, 40)).to eq(true)
+      expect(@market.sell(@item1, 62)).to eq(true)
+      expect(@vendor1.check_stock(@item1)).to eq(0)
+      expect(@vendor2.check_stock(@item1)).to eq(8)
+      expect(@vendor3.check_stock(@item1)).to eq(0)
     end
   end
 end
