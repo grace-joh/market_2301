@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Vendor do
-  before(:each) do
+  before(:all) do
     @item1 = Item.new({ name: 'Peach',
                         price: '$0.75' })
     @item2 = Item.new({ name: 'Tomato',
@@ -42,22 +42,20 @@ RSpec.describe Vendor do
 
   describe '#vendor_names' do
     it 'can list all vendors names' do
-      @market.add_vendor(@vendor1)
-      @market.add_vendor(@vendor2)
-      @market.add_vendor(@vendor3)
-
       expect(@market.vendor_names).to eq(['Rocky Mountain Fresh', 'Ba-Nom-a-Nom', 'Palisade Peach Shack'])
     end
   end
 
   describe '#vendors_that_sell' do
     it 'can list vendors that sell a specific item' do
-      @market.add_vendor(@vendor1)
-      @market.add_vendor(@vendor2)
-      @market.add_vendor(@vendor3)
-
       expect(@market.vendors_that_sell(@item1)).to eq([@vendor1, @vendor3])
       expect(@market.vendors_that_sell(@item4)).to eq([@vendor2])
+    end
+  end
+
+  describe '#sorted_item_list' do
+    it 'lists the names of all items the markets vendors have in stock alphabetically' do
+      expect(@market.sorted_item_list).to eq(['Banana Nice Cream', 'Peach', 'Peach-Raspberry Nice Cream', 'Tomato'])
     end
   end
 end
